@@ -20,3 +20,9 @@ body {
     right: 20px;
     top: -2px;
 }
+
+.form-control-error {
+    display: inline-block;
+    color: red;
+    margin: 5px 0;
+}
