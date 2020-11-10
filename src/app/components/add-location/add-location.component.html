@@ -1,0 +1,26 @@
+<div class='well' [formGroup]='createLocationForm'>
+    <h2>Enter a zipcode:</h2>
+    <input class='form-control' formControlName='zip' placeholder='Zipcode' type='text' id='addLocation'>
+    <ng-container *ngIf='createLocationForm.dirty'>
+        <small class='form-control-error'
+               *ngIf="createLocationForm.get('zip')?.errors?.required">
+            The field is required!
+        </small>
+        <small class='form-control-error'
+               *ngIf="createLocationForm.get('zip')?.errors?.pattern">
+            The input should be a valid zipcode!
+        </small>
+        <small class='form-control-error'
+               *ngIf="createLocationForm.get('zip')?.errors?.duplicate">
+            The location is already in the list!
+        </small>
+    </ng-container>
+    <br>
+    <button
+            class='btn btn-primary'
+            id='addLocationBtn'
+            (click)='submitNewLocation()'
+            [disabled]='createLocationForm.invalid'>
+        Add location
+    </button>
+</div>
