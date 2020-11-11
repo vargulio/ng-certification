@@ -17,6 +17,7 @@ export class MainComponent implements OnInit {
 
     locationIds: string[] = [];
     locationsData: Location[] = [];
+    error: string = '';
 
     constructor(
         private http: HttpClient,
@@ -36,6 +37,7 @@ export class MainComponent implements OnInit {
         const locations = JSON.parse(this.localStorage.getItem(locationsStorageKey));
         this.dataService.getLocations(locations).pipe(take(1)).subscribe((data: Location[]) => {
             this.locationsData = data;
+            this.locationIds = locations;
         });
     }
 
@@ -50,7 +52,7 @@ export class MainComponent implements OnInit {
             this.locationIds.push(formValue.zip);
             this.localStorage.setItem(locationsStorageKey, JSON.stringify(this.locationIds));
         }, err => {
-            //TODO handle errors
+            this.error = err.error ? err.error.message : '';
         });
     }
 

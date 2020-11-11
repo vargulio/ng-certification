@@ -11,6 +11,7 @@
                 - Min: {{day.forecastItems.min}}
                 - Max: {{day.forecastItems.max}}
                 <img
+                        *ngIf='day.forecastItems.icon'
                         class='icon'
                         [src]="'https://www.angulartraining.com/images/weather/'+day.forecastItems.icon+'.png'">
             </li>

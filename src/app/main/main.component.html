@@ -2,6 +2,7 @@
         [locationsList]='locationIds'
         (submit)='submitNewLocation($event)'>
 </app-add-location>
+<small class='form-control-error'>{{error}}</small>
 <app-location-list
         [locationsList]='locationsData'
         (delete)='deleteLocation($event)'>

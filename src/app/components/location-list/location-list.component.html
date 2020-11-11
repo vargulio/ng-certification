@@ -14,6 +14,6 @@
     </div>
     <div>
         <span class='close' (click)='onDelete(location.zip)'>×</span>
-        <img [src]="'https://www.angulartraining.com/images/weather/'+location.icon+'.png'">
+        <img *ngIf='location.icon' [src]="'https://www.angulartraining.com/images/weather/'+location.icon+'.png'">
     </div>
 </div>
