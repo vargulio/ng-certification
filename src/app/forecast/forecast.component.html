@@ -1,1 +1,21 @@
-<p>forecast works!</p>
+<h4>Template for 5-day forecast page:</h4>
+<div *ngIf='data$ | async as data' class='container-fluid'>
+    <div class='panel panel-default'>
+        <div class='panel-heading'>
+            <h3 class='panel-title'>5-day forecast for {{data.city.name}}</h3>
+        </div>
+        <ul class='list-group'>
+            <li class='list-group-item' *ngFor="let day of data.list">
+                {{day.date | date:  'EEEE, MMM d'}}:
+                {{day.forecastItems.weatherGrouped}}
+                - Min: {{day.forecastItems.min}}
+                - Max: {{day.forecastItems.max}}
+
+                <img class='icon' [src]="'https://www.angulartraining.com/images/weather/'+day.forecastItems.icon+'.png'">
+            </li>
+        </ul>
+    </div>
+    <button [routerLink]="['/']" class='btn btn-success' tabindex='0' id='mainPageBtn'>
+        &lt; Back to main page
+    </button>
+</div>

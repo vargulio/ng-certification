@@ -42,7 +42,7 @@ export class MainComponent implements OnInit {
         const newLocations = locationIds.map(id => {
             const params = new HttpParams({fromObject: {zip: `${id},us`, appid: environment.weatherApiKey}});
             return this.http.get(
-                environment.weatherAPI, {params}
+                environment.weatherAPI+'/weather', {params}
             ).pipe(map(
                 res => ({...res, zip: id})
             ));
@@ -60,7 +60,7 @@ export class MainComponent implements OnInit {
         const newLocation = formValue.zip;
         const params = new HttpParams({fromObject: {zip: `${newLocation},us`, appid: environment.weatherApiKey}});
 
-        this.http.get(environment.weatherAPI, {params}).pipe(
+        this.http.get(environment.weatherAPI + '/weather', {params}).pipe(
             take(1),
             map(res => ({...res, zip: newLocation}))
         ).subscribe(response => {
