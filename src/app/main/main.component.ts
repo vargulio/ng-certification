@@ -1,11 +1,12 @@
 import { Component, OnInit } from "@angular/core";
 import { FormBuilder } from "@angular/forms";
-import { of, forkJoin } from "rxjs/index";
-import { catchError, map, take } from "rxjs/internal/operators";
-import { HttpClient, HttpParams } from "@angular/common/http";
+import { take } from "rxjs/internal/operators";
+import { HttpClient } from "@angular/common/http";
 
-import { StoreService } from "../shared/services/store.service";
-import { environment } from "../../environments/environment";
+import { DataService } from "../shared/services/data.service";
+import { LocalStorageService } from "../shared/services/local-storage.service";
+import { locationsStorageKey } from "../shared/constants/app.constants";
+import { Location } from "../shared/models/models";
 
 @Component({
     selector: "app-main",
@@ -14,68 +15,53 @@ import { environment } from "../../environments/environment";
 })
 export class MainComponent implements OnInit {
 
-    locationIds = [];
-
-    locationsData = [];
+    locationIds: string[] = [];
+    locationsData: Location[] = [];
 
     constructor(
         private http: HttpClient,
         private fb: FormBuilder,
-        private store: StoreService) {
-
+        private dataService: DataService,
+        private localStorage: LocalStorageService) {
     }
 
     ngOnInit(): void {
         this.getPersistedLocations();
     }
 
-    private getPersistedLocations() {
-        this.store.state$.pipe(take(1)).subscribe(state => {
-                this.getLocations(state.locations);
-                this.locationIds = state.locations || [];
-            }
-        );
+    /**
+     * Loads the location with zipcodes stored in localStorage
+     */
+    private getPersistedLocations(): void {
+        const locations = JSON.parse(this.localStorage.getItem(locationsStorageKey));
+        this.dataService.getLocations(locations).pipe(take(1)).subscribe((data: Location[]) => {
+            this.locationsData = data;
+        });
     }
 
-
-    private getLocations(locationIds: string[]) {
-        const newLocations = locationIds.map(id => {
-            const params = new HttpParams({fromObject: {zip: `${id},us`, appid: environment.weatherApiKey}});
-            return this.http.get(
-                environment.weatherAPI+'/weather', {params}
-            ).pipe(map(
-                res => ({...res, zip: id})
-            ));
-        });
-        forkJoin(newLocations).pipe(take(1), catchError(err => {
-            return of(err);
-        })).subscribe(locationsData => {
-            this.locationsData = this.locationsData.concat(locationsData);
-        });
-
-    }
-
-
-    submitNewLocation(formValue: any) {
-        const newLocation = formValue.zip;
-        const params = new HttpParams({fromObject: {zip: `${newLocation},us`, appid: environment.weatherApiKey}});
-
-        this.http.get(environment.weatherAPI + '/weather', {params}).pipe(
-            take(1),
-            map(res => ({...res, zip: newLocation}))
-        ).subscribe(response => {
-            this.store.next("locations", this.locationIds.concat([newLocation]));
+    /**
+     * Makes request to get the info for a new location
+     * @param {{zip: string}} formValue
+     */
+    submitNewLocation(formValue: {zip: string}) {
+        this.dataService.submitNewLocation(formValue).pipe(take(1)).subscribe((response: Location) => {
             // add on top of the lsit
             this.locationsData = [response].concat(this.locationsData);
+            this.locationIds.push(formValue.zip);
+            this.localStorage.setItem(locationsStorageKey, JSON.stringify(this.locationIds));
         }, err => {
             //TODO handle errors
         });
     }
 
+    /**
+     * Removes the location identidied by zipcode from the local lists and localStorage
+     * @param {string} zip
+     */
     deleteLocation(zip: string) {
         this.locationsData = this.locationsData.filter(i => i.zip !== zip);
         this.locationIds = this.locationIds.filter(i => i !== zip);
-        this.store.next("locations", this.locationIds);
+        this.localStorage.setItem(locationsStorageKey,JSON.stringify(this.locationIds));
     }
 
 }

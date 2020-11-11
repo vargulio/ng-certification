@@ -1,24 +1,18 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from "@angular/core";
-import { getWeatherIcon } from "../../shared/constants/app.constants";
+import { Component, EventEmitter, Input, Output } from "@angular/core";
 
 @Component({
     selector: "app-location-list",
     templateUrl: "./location-list.component.html",
-    styleUrls: ["./location-list.component.css"]
 })
 export class LocationListComponent {
 
-    _locationsList: any[];
-
-
-    @Input() set locationsList(locationList: any[]){
-        this._locationsList = locationList.map(i => ({...i, icon: getWeatherIcon(i.weather[0].main)}));
-    }
-
-
-
+    @Input() locationsList = [];
     @Output() delete: EventEmitter<string> = new EventEmitter<string>();
 
+    /**
+     * Emits the zipcode on clicking on the x to delete the location
+     * @param {string} zip
+     */
     onDelete(zip: string) {
         this.delete.emit(zip);
     }

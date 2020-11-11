@@ -1,4 +1,4 @@
-<div class='container-fluid flex' *ngFor='let location of _locationsList'>
+<div class='container-fluid flex' *ngFor='let location of locationsList'>
     <div>
         <h3>{{location.name}} ({{location.zip}})</h3>
         <h4>Current conditions: {{location.weather[0]?.description}}</h4>

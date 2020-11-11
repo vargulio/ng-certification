@@ -1,19 +1,19 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
-import { zipCodePattern } from "../../shared/constants/app.constants";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+
+import { zipCodePattern } from "../../shared/constants/app.constants";
 
 @Component({
     selector: "app-add-location",
-    templateUrl: "./add-location.component.html",
-    styleUrls: ["./add-location.component.css"]
+    templateUrl: "./add-location.component.html"
 })
 export class AddLocationComponent implements OnInit {
 
-    @Input() locationsList: any[] = [];
+    @Input() locationsList: Location[] = [];
 
     @Output() submit: EventEmitter<any> = new EventEmitter<any>();
 
-    createLocationForm: FormGroup;
+    createLocationForm: FormGroup = null;
 
     constructor(private fb: FormBuilder) {
     }
@@ -22,12 +22,23 @@ export class AddLocationComponent implements OnInit {
         this.initForm();
     }
 
+    /**
+     * Creates the create location form
+     */
     private initForm() {
         this.createLocationForm = this.fb.group({
             "zip": ["", [Validators.required, Validators.pattern(zipCodePattern)]]
         });
     }
 
+    /**
+     * If the locationList doesn't contain the new zipcode emit an event
+     * to add the location in the list.
+     *
+     * Clears the form afterwards.
+     *
+     * If the list already contains the zipcode, sets a duplicate error.
+     */
     submitNewLocation() {
         const newLocation = this.createLocationForm.value.zip;
         if (!this.locationsList.includes(newLocation)) {
