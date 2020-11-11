@@ -14,7 +14,7 @@ import { environment } from "../../environments/environment";
 })
 export class MainComponent implements OnInit {
 
-    private locationIds = [];
+    locationIds = [];
 
     locationsData = [];
 

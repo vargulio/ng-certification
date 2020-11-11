@@ -8,7 +8,7 @@ import { getWeatherIcon } from "../../shared/constants/app.constants";
 })
 export class LocationListComponent {
 
-    private _locationsList: any[];
+    _locationsList: any[];
 
 
     @Input() set locationsList(locationList: any[]){
